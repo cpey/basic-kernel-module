@@ -1,3 +1,4 @@
+EXTRA_CFLAGS := -I$(src)/../include
 obj-m += simple-module.o
 
 all:

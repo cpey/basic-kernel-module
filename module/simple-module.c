@@ -5,12 +5,9 @@
 #include <linux/module.h>
 #include <linux/debugfs.h>
 #include <linux/miscdevice.h>
-
-//#define DEBUGFS
+#include "defs.h"
 
 MODULE_LICENSE("GPL");
-
-#define SIMPLE_MODULE_FN1   _IOW(0x33, 0, int32_t *)
 
 #ifdef DEBUGFS
 struct dentry *file;
@@ -27,6 +24,17 @@ static long device_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
     switch (cmd) {
     case SIMPLE_MODULE_FN1:
         printk(KERN_INFO "[%s] CALL_FN1\n", KBUILD_MODNAME);
+        break;
+    case SIMPLE_MODULE_FN2:
+        printk(KERN_INFO "[%s] CALL_FN2\n", KBUILD_MODNAME);
+        uint32_t ptr[REQUEST_LENGTH];
+
+        if (copy_from_user((void*)ptr, (void*)arg, (sizeof(*ptr) * REQUEST_LENGTH)) > 0)
+            return -EFAULT; 
+
+        ptr[REQUEST_LENGTH - 1] = 0x5A5A5A5A;
+        if (copy_to_user((void*)arg, (void*)ptr, (sizeof(*ptr) * REQUEST_LENGTH)) > 0)
+            return -EFAULT; 
         break;
     default:
         printk(KERN_INFO "[%s] Invalid ioctl command\n", KBUILD_MODNAME);
@@ -51,7 +59,7 @@ static const struct file_operations my_fops = {
     .open = device_open,
     .release = device_release,
     .unlocked_ioctl = device_ioctl,
-	.flush = device_flush,
+    .flush = device_flush,
 };
 
 #ifndef DEBUGFS
@@ -64,7 +72,7 @@ static struct miscdevice mod_misc_dev = {
 
 static int __init test_module_init(void)
 {
-    printk(KERN_INFO "Simple module test\n");
+    printk(KERN_INFO "[%s] Loaded module test\n", KBUILD_MODNAME);
 #ifdef DEBUGFS
     file = debugfs_create_file(KBUILD_MODNAME, 0644, NULL, NULL, &my_fops);
     return 0;
@@ -80,7 +88,7 @@ static void __exit test_module_exit(void)
 #else
     misc_deregister(&mod_misc_dev);
 #endif
-    printk(KERN_INFO "Unloaded module Test\n");
+    printk(KERN_INFO "[%s] Unloaded module Test\n", KBUILD_MODNAME);
 }
 
 module_init(test_module_init);

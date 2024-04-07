@@ -9,18 +9,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-
-#define SIMPLE_MODULE_FN1   _IOW(0x33, 0, int32_t *)
-
-//#define DEBUGFS
-
-#ifdef DEBUGFS
-#define CHIPSEC_DRIVER_PATH "/sys/kernel/debug/simple_module"
-#else
-#define CHIPSEC_DRIVER_PATH "/dev/simple_module"
-#endif
-
-#define REQUEST_LENGTH      9
+#include "defs.h"
 
 #define CHECK_ERR(expr) {  \
     int check_val = expr; \
@@ -40,13 +29,14 @@
 
 int main() {
     int fd;
-    int request[REQUEST_LENGTH];
+    uint32_t request[REQUEST_LENGTH];
     uint64_t time_delta;
     uint64_t start_time;
 
     memset(request, 0, REQUEST_LENGTH * sizeof(int));
 
     CHECK_ERR(fd = open(CHIPSEC_DRIVER_PATH, O_RDWR));
-    CHECK_ERR(ioctl(fd, SIMPLE_MODULE_FN1, request));
+    CHECK_ERR(ioctl(fd, SIMPLE_MODULE_FN2, request));
+    printf("Received: 0x%X\n",  request[REQUEST_LENGTH - 1]);
     close(fd);
 }

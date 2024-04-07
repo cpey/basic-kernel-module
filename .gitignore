@@ -1,0 +1,9 @@
+test-app
+*.sw?
+*.o
+*.ko
+*.mod.c
+*.symvers
+*.order
+*.cmd
+*.mod
