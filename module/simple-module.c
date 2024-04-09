@@ -70,9 +70,9 @@ static struct miscdevice mod_misc_dev = {
 };
 #endif
 
-static int __init test_module_init(void)
+static int __init simple_module_init(void)
 {
-    printk(KERN_INFO "[%s] Loaded module test\n", KBUILD_MODNAME);
+    printk(KERN_INFO "[%s] Loaded module\n", KBUILD_MODNAME);
 #ifdef DEBUGFS
     file = debugfs_create_file(KBUILD_MODNAME, 0644, NULL, NULL, &my_fops);
     return 0;
@@ -81,15 +81,15 @@ static int __init test_module_init(void)
 #endif
 }
 
-static void __exit test_module_exit(void)
+static void __exit simple_module_exit(void)
 {
 #ifdef DEBUGFS
     debugfs_remove(file);
 #else
     misc_deregister(&mod_misc_dev);
 #endif
-    printk(KERN_INFO "[%s] Unloaded module Test\n", KBUILD_MODNAME);
+    printk(KERN_INFO "[%s] Unloaded module\n", KBUILD_MODNAME);
 }
 
-module_init(test_module_init);
-module_exit(test_module_exit);
+module_init(simple_module_init);
+module_exit(simple_module_exit);

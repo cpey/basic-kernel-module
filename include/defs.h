@@ -9,9 +9,9 @@
 #define REQUEST_LENGTH      9
 
 #ifdef DEBUGFS
-#define CHIPSEC_DRIVER_PATH "/sys/kernel/debug/simple_module"
+#define SIMPLE_MODULE_DEVICE "/sys/kernel/debug/simple_module"
 #else
-#define CHIPSEC_DRIVER_PATH "/dev/simple_module"
+#define SIMPLE_MODULE_DEVICE "/dev/simple_module"
 #endif
 
 #endif

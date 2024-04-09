@@ -35,7 +35,7 @@ int main() {
 
     memset(request, 0, REQUEST_LENGTH * sizeof(int));
 
-    CHECK_ERR(fd = open(CHIPSEC_DRIVER_PATH, O_RDWR));
+    CHECK_ERR(fd = open(SIMPLE_MODULE_DEVICE, O_RDWR));
     CHECK_ERR(ioctl(fd, SIMPLE_MODULE_FN2, request));
     printf("Received: 0x%X\n",  request[REQUEST_LENGTH - 1]);
     close(fd);
